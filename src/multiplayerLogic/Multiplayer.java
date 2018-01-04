@@ -1,4 +1,4 @@
-package candyLand;
+package multiplayerLogic;
 import java.awt.event.KeyListener;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -7,29 +7,40 @@ import java.util.ArrayList;
 import javax.swing.JFrame;
 import javax.tools.DocumentationTool.Location;
 
+import org.jgroups.Address;
 import org.jgroups.JChannel;
 import org.jgroups.Message;
 import org.jgroups.View;
 import org.jgroups.stack.Configurator;
 
-import shape.Hunter;
-import shape.Sweet;
+import gameDisplay.GridDisplay;
+import gameShapes.Hunter;
+import gameShapes.Sweet;
 
 public class Multiplayer extends org.jgroups.ReceiverAdapter {
 
 JChannel channel;
 String user_name=System.getProperty("user.name", "n/a");
 
+
 //attributs pour le jeu 
 
 int cellSize = 30;
 int gridSize = 30;
 JFrame window = new GridDisplay(cellSize,gridSize, 15);
+int nbSweets = 15;
+Address playerId;
+
 
 	private void startSession() throws Exception {
 		channel = new JChannel();
+		//channel.setDiscardOwnMessages(true);
 		channel.setReceiver(this);
 		channel.connect("Candy_Land");
+		playerId = channel.address(); //own addr
+		if (isFirstConnectedPerson()){
+			((GridDisplay)this.window).initializeSweets(nbSweets);
+		}
 		eventLoop();
 		channel.close();
 	}
@@ -38,7 +49,6 @@ JFrame window = new GridDisplay(cellSize,gridSize, 15);
 		 BufferedReader in=new BufferedReader(new InputStreamReader(System.in));
 		    while(true) {
 		        try {
-		        	
 		            System.out.print("> "); System.out.flush();
 		            String line=in.readLine().toLowerCase();
 		            if(line.startsWith("quit") || line.startsWith("exit"))
@@ -68,8 +78,23 @@ JFrame window = new GridDisplay(cellSize,gridSize, 15);
 		  */
 	}
 	
+	private boolean isFirstConnectedPerson(){
+		return channel.getView().getMembers().get(0) == playerId;
+	}
+	
 	public void viewAccepted(View new_view) {
 	    //Add a hunter to the array of Hunters.
+		if (isFirstConnectedPerson()){
+			Address last = new_view.getMembers().get(new_view.getMembers().size()-1);
+			//send all messages
+			Message msg=new Message(last, "Hello");
+			try {
+				channel.send(msg);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		addHunter(new_view.getViewId().getId());
 	}
 	

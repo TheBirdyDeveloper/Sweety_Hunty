@@ -1,12 +1,12 @@
-package shape;
+package gameShapes;
 
 import java.awt.Graphics;
 import java.awt.Point;
 
 import javax.swing.JComponent;
 
-import candyLand.GridDisplay;
 import candyLand.LocationOnGrid;
+import gameDisplay.GridDisplay;
 
 public abstract class AbstractShape extends JComponent {
 
