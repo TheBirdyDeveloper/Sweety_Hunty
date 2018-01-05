@@ -3,6 +3,6 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
-	<classpathentry kind="lib" path="H:/Documents/PM_SR_game/Sweety Hunty/lib/jgroups-4.0.7.Final.jar"/>
+	<classpathentry kind="lib" path="H:/windows/git/Sweety_Hunty/lib/jgroups-4.0.7.Final.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -25,11 +25,14 @@ String user_name=System.getProperty("user.name", "n/a");
 int cellSize = 30;
 int gridSize = 30;
 JFrame window = new GridDisplay(cellSize,gridSize, 15);
+long idPlayer;
 
 	private void startSession() throws Exception {
 		channel = new JChannel();
 		channel.setReceiver(this);
+		channel.isOpen();
 		channel.connect("Candy_Land");
+		idPlayer = channel.getView().getMembers().size();
 		eventLoop();
 		channel.close();
 	}
@@ -70,7 +73,7 @@ JFrame window = new GridDisplay(cellSize,gridSize, 15);
 	
 	public void viewAccepted(View new_view) {
 	    //Add a hunter to the array of Hunters.
-		addHunter(new_view.getViewId().getId());
+		addHunter(idPlayer);
 	}
 	
 	public void addHunter(Long id_hunter) {
