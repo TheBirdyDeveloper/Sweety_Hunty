@@ -34,10 +34,10 @@ Address playerId;
 
 	private void startSession() throws Exception {
 		channel = new JChannel();
-		//channel.setDiscardOwnMessages(true);
+		channel.setDiscardOwnMessages(true);
 		channel.setReceiver(this);
 		channel.connect("Candy_Land");
-		playerId = channel.address(); //own addr
+		//playerId = channel.address(); //own addr
 		if (isFirstConnectedPerson()){
 			((GridDisplay)this.window).initializeSweets(nbSweets);
 		}
@@ -82,12 +82,18 @@ Address playerId;
 		return channel.getView().getMembers().get(0) == playerId;
 	}
 	
+	private boolean isLastConnectedPerson(){
+		return channel.getView().getMembers().get(channel.getView().getMembers().size()-1).equals(playerId);
+	}
+	
 	public void viewAccepted(View new_view) {
-	    //Add a hunter to the array of Hunters.
+		playerId = channel.address();
+	    //Send all information if first in the List of Hunters
 		if (isFirstConnectedPerson()){
 			Address last = new_view.getMembers().get(new_view.getMembers().size()-1);
 			//send all messages
-			Message msg=new Message(last, "Hello");
+			Message msg=new Message(last, "15 sweets left");
+			
 			try {
 				channel.send(msg);
 			} catch (Exception e) {
@@ -95,7 +101,19 @@ Address playerId;
 				e.printStackTrace();
 			}
 		}
-		addHunter(new_view.getViewId().getId());
+		
+		//If new player, create new Hunter and send it to all
+		if (isLastConnectedPerson()){
+			addHunter(new_view.getViewId().getId());
+			Message newMsg=new Message(null, "I am newbie");
+			
+			try {
+				channel.send(newMsg);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	}
 	
 	public void addHunter(Long id_hunter) {
