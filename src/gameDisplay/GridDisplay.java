@@ -11,6 +11,7 @@ import java.util.Map;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 
+import org.jgroups.Address;
 import org.jgroups.tests.rt.transports.JGroupsTransport;
 
 import candyLand.LocationOnGrid;
@@ -65,8 +66,10 @@ public class GridDisplay extends JFrame implements KeyListener {
 		}		
 	}
 	
-	public void addHunter(Long id_player) {
-		this.hunter_array.add(new Hunter(this.computeFreeSpot(), this, id_player));
+	public LocationOnGrid addHunter(Address id_player) {
+		Hunter hunter = new Hunter(this.computeFreeSpot(), this, id_player);
+		this.hunter_array.add(hunter);
+		return hunter.getPos();
 	}
 	
 	private LocationOnGrid computeFreeSpot() {
