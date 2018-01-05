@@ -1,4 +1,4 @@
-package candyLand;
+package gameDisplay;
 
 import java.awt.Container;
 import java.awt.Dimension;
@@ -13,8 +13,9 @@ import javax.swing.JFrame;
 
 import org.jgroups.tests.rt.transports.JGroupsTransport;
 
-import shape.Hunter;
-import shape.Sweet;
+import candyLand.LocationOnGrid;
+import gameShapes.Hunter;
+import gameShapes.Sweet;
 
 public class GridDisplay extends JFrame implements KeyListener {
 
@@ -26,6 +27,7 @@ public class GridDisplay extends JFrame implements KeyListener {
 	Container myContainer ;
 
 	ArrayList<Sweet> sweet_array;
+
 	ArrayList<Hunter> hunter_array;
 	
 	public GridDisplay(int cellSize, int gridSize, int nbSweets) {
@@ -41,9 +43,6 @@ public class GridDisplay extends JFrame implements KeyListener {
 		myContainer.setPreferredSize(new Dimension(cellSize * (gridSize + 1), cellSize * (gridSize + 1) ));
 		pack();
 		setVisible(true);
-		
-		//Grid initialization
-		initializeSweets(nbSweets);
 	}
 
 	public int getCellSize() {
@@ -59,9 +58,10 @@ public class GridDisplay extends JFrame implements KeyListener {
 		this.gridSize = gridSize;
 	}
 	
-	private void initializeSweets(int nbSweets){
+	public void initializeSweets(int nbSweets){
 		while (this.sweet_array.size() < nbSweets){
-			this.sweet_array.add(new Sweet(new LocationOnGrid((int) (Math.random()*gridSize), (int) (Math.random()*gridSize)), this));
+			this.sweet_array.add(new Sweet(this.computeFreeSpot(), this));
+
 		}		
 	}
 	
@@ -134,6 +134,23 @@ public class GridDisplay extends JFrame implements KeyListener {
 //		 repaint();
 //		} // EndMethod keyPressed
 
+	
+	public ArrayList<Sweet> getSweet_array() {
+		return sweet_array;
+	}
+
+	public void setSweet_array(ArrayList<Sweet> sweet_array) {
+		this.sweet_array = sweet_array;
+	}
+
+	public ArrayList<Hunter> getHunter_array() {
+		return hunter_array;
+	}
+
+	public void setHunter_array(ArrayList<Hunter> hunter_array) {
+		this.hunter_array = hunter_array;
+	}
+	
 	@Override
 	public void keyReleased(KeyEvent e) {
 		// TODO Auto-generated method stub
@@ -151,7 +168,4 @@ public class GridDisplay extends JFrame implements KeyListener {
 		// TODO Auto-generated method stub
 		
 	}
-	
-	
-
 }

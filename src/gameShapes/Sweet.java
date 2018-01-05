@@ -1,10 +1,10 @@
-package shape;
+package gameShapes;
 
 import java.awt.Color;
 import java.awt.Graphics;
 
-import candyLand.GridDisplay;
 import candyLand.LocationOnGrid;
+import gameDisplay.GridDisplay;
 
 //This class defines the properties of the sweets.
 public class Sweet extends AbstractShape{

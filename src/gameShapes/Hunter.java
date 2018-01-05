@@ -1,10 +1,10 @@
-package shape;
+package gameShapes;
 
 import java.awt.Color;
 import java.awt.Graphics;
 
-import candyLand.GridDisplay;
 import candyLand.LocationOnGrid;
+import gameDisplay.GridDisplay;
 
 public class Hunter extends AbstractShape{
 
