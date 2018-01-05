@@ -7,6 +7,8 @@ import java.awt.peer.WindowPeer;
 import javax.swing.JFrame;
 
 import org.jgroups.Address;
+import org.jgroups.JChannel;
+import org.jgroups.Message;
 
 import gameDisplay.GridDisplay;
 import gameShapes.Hunter;
@@ -16,10 +18,12 @@ public class movementListener implements KeyListener {
 
 	Address playerId;
 	JFrame window;
+	JChannel channel;
 
-	public  movementListener(Address playId, JFrame windows) {
+	public  movementListener(Address playId, JFrame windows, JChannel channel) {
 		this.playerId = playId;
 		this.window = windows;
+		this.channel = channel;
 	}
 	@Override
 	public void keyPressed(KeyEvent e) {
@@ -31,6 +35,14 @@ public class movementListener implements KeyListener {
 					if(hunter.getPos().getY() < 29 && isAvailable(hunter.getPos().getX(), (hunter.getPos().getY()+1))) {
 						hunter.getPos().setY(hunter.getPos().getY()+1);
 						isSweet(hunter.getPos().getX(), hunter.getPos().getY());
+						
+						Message newMsg=new Message(null, new GameMessageContent(1, playerId.toString(), hunter.getPos().getX(), hunter.getPos().getY()));
+						try {
+							channel.send(newMsg);
+						} catch (Exception exception) {
+							// TODO Auto-generated catch block
+							exception.printStackTrace();
+						}
 					}
 					
 				}
@@ -42,6 +54,14 @@ public class movementListener implements KeyListener {
 					if(hunter.getPos().getY() > 0 && isAvailable(hunter.getPos().getX(), (hunter.getPos().getY()-1))) {
 						hunter.getPos().setY(hunter.getPos().getY()-1);
 						isSweet(hunter.getPos().getX(), hunter.getPos().getY());
+						
+						Message newMsg=new Message(null, new GameMessageContent(1, playerId.toString(), hunter.getPos().getX(), hunter.getPos().getY()));
+						try {
+							channel.send(newMsg);
+						} catch (Exception exception) {
+							// TODO Auto-generated catch block
+							exception.printStackTrace();
+						}
 					}
 					
 				}
@@ -53,6 +73,14 @@ public class movementListener implements KeyListener {
 					if(hunter.getPos().getX() > 0 && isAvailable(hunter.getPos().getX()-1, (hunter.getPos().getY()))) {
 						hunter.getPos().setX(hunter.getPos().getX()-1);
 						isSweet(hunter.getPos().getX(), hunter.getPos().getY());
+						
+						Message newMsg=new Message(null, new GameMessageContent(1, playerId.toString(), hunter.getPos().getX(), hunter.getPos().getY()));
+						try {
+							channel.send(newMsg);
+						} catch (Exception exception) {
+							// TODO Auto-generated catch block
+							exception.printStackTrace();
+						}
 					}
 					
 				}
@@ -64,6 +92,14 @@ public class movementListener implements KeyListener {
 					if(hunter.getPos().getX() < 29 && isAvailable(hunter.getPos().getX()+1, (hunter.getPos().getY()))) {
 						hunter.getPos().setX(hunter.getPos().getX()+1);
 						isSweet(hunter.getPos().getX(), hunter.getPos().getY());
+						
+						Message newMsg=new Message(null, new GameMessageContent(1, playerId.toString(), hunter.getPos().getX(), hunter.getPos().getY()));
+						try {
+							channel.send(newMsg);
+						} catch (Exception exception) {
+							// TODO Auto-generated catch block
+							exception.printStackTrace();
+						}
 					}
 					
 				}
@@ -73,7 +109,8 @@ public class movementListener implements KeyListener {
 			break;
 		}
 		
-		window.repaint();
+		window.revalidate();
+	       window.repaint();
 	}
 	
 	
@@ -90,7 +127,6 @@ public class movementListener implements KeyListener {
 	}
 	
 	private boolean isAvailable(int x, int y) {
-		System.out.println("new Pos = " + x + " , " + y);
 		for(Hunter hunter : ((GridDisplay)this.window).getHunter_array()) {
 			if(hunter.getPos().getX() == x && hunter.getPos().getY() == y) {
 				return false;
@@ -103,10 +139,23 @@ public class movementListener implements KeyListener {
 		for(int i = 0; i < ((GridDisplay)this.window).getSweet_array().size(); i++){
 			Sweet sweet = ((GridDisplay)this.window).getSweet_array().get(i);
 			if(sweet.getPos().getX() == x && sweet.getPos().getY() == y) {
-				((GridDisplay)this.window).getSweet_array().remove(i);
+				
+				
+				Message newMsg=new Message(null, new GameMessageContent(4, playerId.toString(), x, y));
+				try {
+					channel.send(newMsg);
+				} catch (Exception exception) {
+					// TODO Auto-generated catch block
+					exception.printStackTrace();
 				}
+				
+				((GridDisplay)this.window).getSweet_array().remove(i);
+				((GridDisplay)this.window).getMyContainer().remove(sweet);
+				((GridDisplay)this.window).pack();
+				
+				}
+			
 		}
-		System.out.println(((GridDisplay)this.window).getSweet_array().size());
 		
 	}
 	

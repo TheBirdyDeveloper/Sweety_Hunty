@@ -44,6 +44,10 @@ public class GridDisplay extends JFrame{
 		setVisible(true);
 	}
 
+	public Container getMyContainer() {
+		return myContainer;
+	}
+
 	public int getCellSize() {
 		return cellSize;
 	}
@@ -80,7 +84,6 @@ public class GridDisplay extends JFrame{
 			y = (int) (Math.random() * gridSize);
 			posOk = isAvailable(x, y);
 			posOkSweet = isAvailableSweet(x, y);
-			System.out.println(posOk);
 		}
 		
 		return new LocationOnGrid(x, y);
@@ -88,7 +91,6 @@ public class GridDisplay extends JFrame{
 	}
 	
 	private boolean isAvailable(int x, int y) {
-		System.out.println("new Pos = " + x + " , " + y);
 		for(Hunter hunter : hunter_array) {
 			if(hunter.getPos().getX() == x && hunter.getPos().getY() == y) {
 				return false;

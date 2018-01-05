@@ -21,7 +21,6 @@ import gameShapes.Sweet;
 
 public class Multiplayer extends org.jgroups.ReceiverAdapter {
 
-	JChannel channel;
 	String user_name=System.getProperty("user.name", "n/a");
 
 
@@ -33,6 +32,7 @@ public class Multiplayer extends org.jgroups.ReceiverAdapter {
 	int nbSweets = 15;
 	Address playerId;
 
+	JChannel channel;
 
 	private void startSession() throws Exception {
 		channel = new JChannel();
@@ -47,66 +47,75 @@ public class Multiplayer extends org.jgroups.ReceiverAdapter {
 	}
 
 	private void eventLoop() {
-		window.addKeyListener(new movementListener(this.playerId, this.window));
-		 BufferedReader in=new BufferedReader(new InputStreamReader(System.in));
-		    while(true) {
-		        try {
-		            System.out.print("> "); System.out.flush();
-		            String line=in.readLine().toLowerCase();
-		            if(line.startsWith("quit") || line.startsWith("exit"))
-		                break;
-		            line="[" + user_name + "] " + line;
-		            Message msg=new Message(null, line);
-		            channel.send(msg);
-		        }
-		        catch(Exception e) {
-		        }
-		    }
-		    
-		    
-			
+		window.addKeyListener(new movementListener(this.playerId, this.window, this.channel));
+		while(true) {
+			window.validate();
+		}   
 	}
-	
+
 	public static void main(String[] args) {
 		try {
+
 			new Multiplayer().startSession();
 		} catch (Exception e) {
 			System.out.println("Connexion impossible");
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void receive(Message msg) {
-		//System.out.println(msg.getSrc() + ": " + msg.getObject());
 		Address addr = msg.getSrc();
 		GameMessageContent messageContent = (GameMessageContent)msg.getObject();
-		System.out.println(msg.getSrc() + ": " + messageContent.getOpCode() + " " + messageContent.getId() +" "+ messageContent.getX() +" "+ messageContent.getY());
 
 
 		if (messageContent.getOpCode() == 1){
 			//moves
+			for (Hunter hunter : (((GridDisplay)this.window).getHunter_array())){
+				if (hunter.getId_player().equals(addr)){
+					hunter.getPos().setX(messageContent.getX());
+					hunter.getPos().setY(messageContent.getY());
+				}
+			}
+			((GridDisplay)this.window).getHunter_array().subList(0, ((GridDisplay)this.window).getHunter_array().size()-1);
+			window.pack();
+			window.revalidate();
+			window.repaint();
 		}
 
 		if (messageContent.getOpCode() == 2){
+			//sweet
 			((GridDisplay)this.window).getSweet_array().add(new Sweet(new LocationOnGrid(messageContent.getX(), messageContent.getY()), (GridDisplay)this.window));
 		}
 
 		if (messageContent.getOpCode() == 3){
+			//hunter
 			((GridDisplay)this.window).getHunter_array().add(new Hunter(new LocationOnGrid(messageContent.getX(), messageContent.getY()), (GridDisplay)this.window, addr));
 		}
+
+		if (messageContent.getOpCode() == 4){
+			for(int i = 0; i < ((GridDisplay)this.window).getSweet_array().size(); i++){
+				Sweet sweet = ((GridDisplay)this.window).getSweet_array().get(i);
+				if(sweet.getPos().getX() == messageContent.getX() && sweet.getPos().getY() == messageContent.getY()) {
+					((GridDisplay)this.window).getSweet_array().remove(i);
+					((GridDisplay)this.window).getMyContainer().remove(sweet);
+					((GridDisplay)this.window).pack();
+				}
+			}
+		}
+
 		/*
 		 * decode avec un switch sur l'OP code
 		 */
 	}
-	
+
 	private boolean isFirstConnectedPerson(){
 		return channel.getView().getMembers().get(0) == playerId;
 	}
-	
+
 	private boolean isLastConnectedPerson(){
 		return channel.getView().getMembers().get(channel.getView().getMembers().size()-1).equals(playerId);
 	}
-	
+
 	public void viewAccepted(View new_view) {
 		playerId = channel.address();
 		//Send all information if first in the List of Hunters
@@ -138,24 +147,11 @@ public class Multiplayer extends org.jgroups.ReceiverAdapter {
 				e.printStackTrace();
 			}
 		}
-		
-		//If new player, create new Hunter and send it to all
-		if (isLastConnectedPerson() && !isFirstConnectedPerson()){
-			LocationOnGrid posNewHunter = addHunter(playerId);
-			Message newMsg=new Message(null, new GameMessageContent(3, playerId.toString(), posNewHunter.getX(), posNewHunter.getY()));
-
-			try {
-				channel.send(newMsg);
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
 		//If already in the game, send it to all
 		else {
 			int myPosX = -1;
 			int myPosY = -1;
-			
+
 			for (Hunter hunter : (((GridDisplay)this.window).getHunter_array())){
 				if (hunter.getId_player() == playerId){
 					myPosX = hunter.getPos().getX();
@@ -177,5 +173,5 @@ public class Multiplayer extends org.jgroups.ReceiverAdapter {
 		return ((GridDisplay)this.window).addHunter(id_hunter);
 	}
 
-	
+
 }
