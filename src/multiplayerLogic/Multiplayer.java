@@ -1,4 +1,5 @@
 package multiplayerLogic;
+import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -46,6 +47,7 @@ Address playerId;
 	}
 	
 	private void eventLoop() {
+		window.addKeyListener(new movementListener(this.playerId, this.window));
 		 BufferedReader in=new BufferedReader(new InputStreamReader(System.in));
 		    while(true) {
 		        try {
@@ -60,6 +62,9 @@ Address playerId;
 		        catch(Exception e) {
 		        }
 		    }
+		    
+		    
+			
 	}
 	
 	public static void main(String[] args) {
@@ -104,7 +109,7 @@ Address playerId;
 		
 		//If new player, create new Hunter and send it to all
 		if (isLastConnectedPerson()){
-			addHunter(new_view.getViewId().getId());
+			addHunter(playerId);
 			Message newMsg=new Message(null, "I am newbie");
 			
 			try {
@@ -116,7 +121,9 @@ Address playerId;
 		}
 	}
 	
-	public void addHunter(Long id_hunter) {
+	public void addHunter(Address id_hunter) {
 		((GridDisplay)this.window).addHunter(id_hunter);
 	}
+
+	
 }

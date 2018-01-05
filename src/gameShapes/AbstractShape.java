@@ -26,6 +26,7 @@ public void setGridPos(int someX,int someY) {
 	 this.location = new LocationOnGrid(someX, someY);
 	}
 
+
 public LocationOnGrid getPos() {
 	return location;
 }
