@@ -11,7 +11,7 @@ import gameDisplay.GridDisplay;
 public class Hunter extends AbstractShape{
 
 	private int score = 0;
-	private Address  id_player;
+	private Address id_player;
 
 	public Hunter(LocationOnGrid loc, GridDisplay display, Address id_player) {
 		super(loc, display);
@@ -22,12 +22,12 @@ public class Hunter extends AbstractShape{
 		score++;
 	}
 
-	public int getScore() {
-		return score;
-	}
-
 	public Address getId_player() {
 		return id_player;
+	}
+
+	public int getScore() {
+		return score;
 	}
 
 	@Override

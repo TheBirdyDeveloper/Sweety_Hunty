@@ -3,6 +3,8 @@ package gameDisplay;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.util.ArrayList;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -62,8 +64,10 @@ public class GridDisplay extends JFrame{
 		}		
 	}
 	
-	public void addHunter(Address id_player) {
-		this.hunter_array.add(new Hunter(this.computeFreeSpot(), this, id_player));
+	public LocationOnGrid addHunter(Address id_player) {
+		Hunter newHunter = new Hunter(this.computeFreeSpot(), this, id_player);
+		this.hunter_array.add(newHunter);
+		return newHunter.getPos();
 	}
 	
 	private LocationOnGrid computeFreeSpot() {
