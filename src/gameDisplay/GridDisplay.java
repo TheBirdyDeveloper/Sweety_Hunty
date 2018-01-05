@@ -2,22 +2,22 @@ package gameDisplay;
 
 import java.awt.Container;
 import java.awt.Dimension;
+import java.util.ArrayList;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JList;
 
-import org.jgroups.tests.rt.transports.JGroupsTransport;
+import org.jgroups.Address;
 
 import candyLand.LocationOnGrid;
 import gameShapes.Hunter;
 import gameShapes.Sweet;
 
-public class GridDisplay extends JFrame implements KeyListener {
+public class GridDisplay extends JFrame{
 
 
 	private int cellSize;
@@ -27,7 +27,6 @@ public class GridDisplay extends JFrame implements KeyListener {
 	Container myContainer ;
 
 	ArrayList<Sweet> sweet_array;
-
 	ArrayList<Hunter> hunter_array;
 	
 	public GridDisplay(int cellSize, int gridSize, int nbSweets) {
@@ -65,18 +64,22 @@ public class GridDisplay extends JFrame implements KeyListener {
 		}		
 	}
 	
-	public void addHunter(Long id_player) {
-		this.hunter_array.add(new Hunter(this.computeFreeSpot(), this, id_player));
+	public LocationOnGrid addHunter(Address id_player) {
+		Hunter newHunter = new Hunter(this.computeFreeSpot(), this, id_player);
+		this.hunter_array.add(newHunter);
+		return newHunter.getPos();
 	}
 	
 	private LocationOnGrid computeFreeSpot() {
 		boolean posOk = false;
+		boolean posOkSweet = false;
 		int x = 0;
 		int y = 0;
-		while(!posOk) {
+		while(!(posOk && posOkSweet)) {
 			x = (int) (Math.random() * gridSize);
 			y = (int) (Math.random() * gridSize);
 			posOk = isAvailable(x, y);
+			posOkSweet = isAvailableSweet(x, y);
 			System.out.println(posOk);
 		}
 		
@@ -93,46 +96,18 @@ public class GridDisplay extends JFrame implements KeyListener {
 		}
 		return true;
 	}
+	
+	private boolean isAvailableSweet(int x, int y) {
+		System.out.println("new Pos = " + x + " , " + y);
+		for(Sweet sweet : sweet_array) {
+			if(sweet.getPos().getX() == x && sweet.getPos().getY() == y) {
+				return false;
+			}
+		}
+		return true;
+	}
 
-//	@Override
-//	public void keyPressed (KeyEvent ke){ 
-//		switch (ke.getKeyCode()) { 
-//		case KeyEvent.VK_DOWN : 
-//			if()
-//			break;
-//		case KeyEvent.VK_UP :
-//			
-//			break;
-//		case KeyEvent.VK_LEFT :
-//			
-//			break;
-//		case KeyEvent.VK_RIGHT :
-//			
-//			break;
-//		default: 
-//			break;
-//		}
-//	
-//		
-//		 int keyCode = ke.getKeyCode();
-//		 if (!moveTable.containsKey(keyCode)) return ;
-//		 
-//		 
-//		 myRectangle.moveRect(moveTable.get(keyCode));
-//		 if (gameMap[myRectangle.x][myRectangle.y]!=null) {
-//		   Circle c = gameMap[myRectangle.x][myRectangle.y];
-//		   myContainer.remove(c);
-//		   pack();
-//		   gameMap[myRectangle.x][myRectangle.y]=null;
-//		   numberOfSweets--;
-//		   if (numberOfSweets==0) {
-//		     System.out.println("You've won. Congratulations!");
-//		     System.exit(0);
-//		   }
-//		   System.out.println("Only "+numberOfSweets+" sweet(s) remaining...");
-//		 }
-//		 repaint();
-//		} // EndMethod keyPressed
+
 
 	
 	public ArrayList<Sweet> getSweet_array() {
@@ -151,21 +126,5 @@ public class GridDisplay extends JFrame implements KeyListener {
 		this.hunter_array = hunter_array;
 	}
 	
-	@Override
-	public void keyReleased(KeyEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
 
-	@Override
-	public void keyTyped(KeyEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void keyPressed(KeyEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
 }
