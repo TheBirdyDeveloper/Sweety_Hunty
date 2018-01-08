@@ -46,8 +46,10 @@ public class Multiplayer extends org.jgroups.ReceiverAdapter {
 			((GridDisplay)this.window).initializeSweets(nbSweets);
 		}
 		eventLoop();
-
-		channel.close();
+		window.setVisible(false);
+		if (isFirstConnectedPerson()){
+			channel.close();
+		}
 	}
 
 	private void eventLoop() {
