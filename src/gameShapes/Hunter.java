@@ -30,6 +30,10 @@ public class Hunter extends AbstractShape{
 		return score;
 	}
 
+	public void setScore(int score) {
+		this.score = score;
+	}
+
 	@Override
 	public void drawShape(Graphics g, int x, int y, int w, int h) {	
 		g.setColor(Color.BLUE);
