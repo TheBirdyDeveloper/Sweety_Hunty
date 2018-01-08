@@ -16,37 +16,34 @@ import multiplayerLogic.Multiplayer;
 
 public class ParallelComputerExample {
 
-	@Test
-	public void runAllTests() {
-		Class<?>[] classes = { ParallelPlayer1.class, ParallelPlayer2.class };
+    @Test
+    public void runAllTests() {
+        Class<?>[] classes = { ParallelPlayer1.class, ParallelPlayer2.class };
 
-		// ParallelComputer(true,true) will run all classes and methods 
-		// in parallel.  (First arg for classes, second arg for methods)
-		JUnitCore.runClasses(new ParallelComputer(true, true), classes);
-	}
+        // ParallelComputer(true,true) will run all classes and methods 
+        // in parallel.  (First arg for classes, second arg for methods)
+        JUnitCore.runClasses(new ParallelComputer(true, true), classes);
+    }
 
-	public static class ParallelPlayer1 {
-		JChannel channelPlayer1;
-		Multiplayer game = new Multiplayer();
-		@Test
-		public void test1a() throws Exception {
-			game.startSessionTest();
+    public static class ParallelPlayer1 {
+    	Multiplayer game = new Multiplayer();
+        @Test
+        public void test1a() throws Exception {
+        	game.startSessionTest();
+            
+        }
+    }
 
-		}
-	}
+    public static class ParallelPlayer2 {
+    	Multiplayer game = new Multiplayer();
+        @Test
+        public void test1a() throws Exception {
+            Thread.sleep(5000);
+            game.startSessionTest();
+  
+            
+        }
+    }
 
-	public static class ParallelPlayer2 {
-		JChannel channelPlayer2;
-		Multiplayer game = new Multiplayer();
-		@Test
-		public void test1a() throws Exception {
-			channelPlayer2 = new JChannel();
-			Thread.sleep(5000);
-			game.startSessionTest();
-
-
-		}
-	}
-
-
+  
 }

@@ -6,6 +6,7 @@ import java.awt.event.KeyListener;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Random;
 
 import javax.swing.JFrame;
 import javax.tools.DocumentationTool.Location;
@@ -63,15 +64,14 @@ public class Multiplayer extends org.jgroups.ReceiverAdapter {
 	}
 
 	public Hunter getMyHunter() {
-		Hunter myHunter = null;
 
 		for (Hunter hunter : (((GridDisplay)this.window).getHunter_array())){
 			if (hunter.getId_player().equals(playerId)){
-				myHunter = hunter;
+				return hunter;
 			}
 		}
 
-		return myHunter;
+		return null;
 	}
 
 	private boolean isWinner(Hunter myHunter) {
@@ -97,15 +97,36 @@ public class Multiplayer extends org.jgroups.ReceiverAdapter {
 		channel.close();
 	}
 
-	private void eventLoopTest() throws AWTException {
+	private void eventLoopTest() throws Exception {
 		window.addKeyListener(new movementListener(this.playerId, this.window, this.channel));
+		Thread.sleep(5000);
 		while(((GridDisplay)this.window).getSweet_array().size() > 0) {
 			window.validate();
+			Random rand = new Random();
+			int direction = rand.nextInt(4);
 			Robot robot = new Robot();
-			robot.keyPress(KeyEvent.VK_DOWN);
-			robot.keyPress(KeyEvent.VK_UP);
-			robot.keyPress(KeyEvent.VK_UP);
-			robot.keyPress(KeyEvent.VK_LEFT);
+			switch(direction) {
+			case 0:
+				robot.keyPress(KeyEvent.VK_UP);
+				robot.keyRelease(KeyEvent.VK_UP);
+				break;
+			case 1:
+				robot.keyPress(KeyEvent.VK_DOWN);
+				robot.keyRelease(KeyEvent.VK_DOWN);
+				break;
+			case 2:
+				robot.keyPress(KeyEvent.VK_LEFT);
+				robot.keyRelease(KeyEvent.VK_LEFT);
+				break;
+			case 3:
+				robot.keyPress(KeyEvent.VK_RIGHT);
+				robot.keyRelease(KeyEvent.VK_RIGHT);
+				break;
+
+			}
+			window.repaint();
+			Thread.sleep(10);
+
 		}   
 	}
 
