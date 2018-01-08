@@ -100,7 +100,6 @@ public class GridDisplay extends JFrame{
 	}
 	
 	private boolean isAvailableSweet(int x, int y) {
-		System.out.println("new Pos = " + x + " , " + y);
 		for(Sweet sweet : sweet_array) {
 			if(sweet.getPos().getX() == x && sweet.getPos().getY() == y) {
 				return false;

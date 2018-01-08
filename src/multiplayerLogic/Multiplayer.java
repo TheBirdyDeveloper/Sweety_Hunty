@@ -28,13 +28,13 @@ public class Multiplayer extends org.jgroups.ReceiverAdapter {
 
 	int cellSize = 30;
 	int gridSize = 30;
-	JFrame window = new GridDisplay(cellSize,gridSize, 15);
+	public JFrame window = new GridDisplay(cellSize,gridSize, 15);
 	int nbSweets = 15;
 	Address playerId;
 
 	JChannel channel;
 
-	private void startSession() throws Exception {
+	public void startSession() throws Exception {
 		channel = new JChannel();
 		channel.setDiscardOwnMessages(true);
 		channel.setReceiver(this);
